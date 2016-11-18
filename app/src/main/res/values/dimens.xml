@@ -1,0 +1,9 @@
+<resources>
+    <dimen name="smartloadinglayout_vertical_margin_top">20dp</dimen>
+    <dimen name="smartloadinglayout_text_size">16sp</dimen>
+    <dimen name="smartloadinglayout_dots_text_size">40sp</dimen>>
+    <dimen name="smartloadinglayout_btn_radius">15dp</dimen>
+    <dimen name="smartloadinglayout_error_btn_margin">12dp</dimen>
+    <dimen name="smartloadinglayout_error_btn_height">40dp</dimen>
+    <dimen name="smartloadinglayout_error_btn_width">130dp</dimen>
+</resources>

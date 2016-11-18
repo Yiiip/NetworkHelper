@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">NetworkHelper</string>
+
+    <string name="loading_description">加载中</string>
+    <string name="empty_description">这里还没有内容哦...</string>
+    <string name="error_description">哎呀！内容出错了！</string>
+    <string name="error_btn_title">重试</string>
+</resources>
