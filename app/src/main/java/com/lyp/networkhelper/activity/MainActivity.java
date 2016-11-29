@@ -85,12 +85,12 @@ public class MainActivity extends BaseActivity {
         mAdapter.setOnItemClickListener(new ItemAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast.makeText(MainActivity.this, ""+position, Toast.LENGTH_SHORT).show();
+                toast(""+position);
             }
 
             @Override
             public void onItemLongClick(View view, int position) {
-
+                toast("long "+position);
             }
         });
     }

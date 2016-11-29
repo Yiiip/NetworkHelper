@@ -2,6 +2,7 @@ package com.lyp.networkhelper.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,10 +10,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.lyp.networkhelper.R;
 import com.lyp.networkhelper.receiver.NetworkReceiver;
+import com.lyp.networkhelper.util.NetworkUtil;
+import com.lyp.networkhelper.view.DefaultLoadingLayout;
+import com.lyp.networkhelper.view.NetworkHelperLayout;
 
 
 /**
@@ -24,9 +30,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private Context mContext;
 
+    private DefaultLoadingLayout mLoadingLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        registerNetworkReceiver();
 
         mContext = this;
 
@@ -36,12 +46,32 @@ public abstract class BaseActivity extends AppCompatActivity {
             setContentView(getLayoutId());
         }
 
+        mLoadingLayout = (DefaultLoadingLayout) NetworkHelperLayout.createDefaultLayout(this, getRootView(this));
 
-        initViews();
-        initData();
-        initEvents();
+        // 检测网络状态
+        if (NetworkUtil.isNetworkAvailable(this)) {
 
-        registerNetworkReceiver();
+            initViews();
+            initData();
+            initEvents();
+        } else {
+            mLoadingLayout.onError();
+            mLoadingLayout.setErrorButtonListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (NetworkReceiver.isNetworkAvailable()) {
+
+                        mLoadingLayout.onDone();
+                        initViews();
+                        initData();
+                        initEvents();
+                    } else {
+                        toast("请检查网络连接！");
+                    }
+                }
+            });
+        }
+
     }
 
 
@@ -93,6 +123,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 获得根布局
+     */
+    private static View getRootView(Activity context)
+    {
+        return ((ViewGroup)context.findViewById(android.R.id.content)).getChildAt(0);
+    }
+
 
     /**
      * 注册网络监听
@@ -110,6 +148,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        //注销广播接收器
         unregisterReceiver(NetworkReceiver.getNetWorkReceiver());
     }
 

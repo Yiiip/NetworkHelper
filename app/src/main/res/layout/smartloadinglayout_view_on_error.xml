@@ -24,5 +24,5 @@
         android:textColor="#ffffff"
         android:textSize="@dimen/smartloadinglayout_text_size"
         android:layout_marginTop="@dimen/smartloadinglayout_error_btn_margin"
-        android:background="#A0A0A0"/>
+        android:background="@color/colorPrimary"/>
 </RelativeLayout>
