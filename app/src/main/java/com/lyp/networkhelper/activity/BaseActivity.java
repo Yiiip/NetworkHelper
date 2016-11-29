@@ -2,6 +2,7 @@ package com.lyp.networkhelper.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import com.lyp.networkhelper.receiver.NetworkReceiver;
 
 
 /**
@@ -27,7 +30,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         mContext = this;
 
-        this.setTranslucentStatusBar(this);
+        this.setTranslucentStatusBar(this, false);
 
         if (getLayoutId() != 0) {
             setContentView(getLayoutId());
@@ -37,6 +40,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         initViews();
         initData();
         initEvents();
+
+        registerNetworkReceiver();
     }
 
 
@@ -88,15 +93,37 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * 注册网络监听
+     */
+    private void registerNetworkReceiver()
+    {
+        NetworkReceiver receiver = NetworkReceiver.getNetWorkReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        filter.addAction("android.gzcpc.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(receiver, filter);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(NetworkReceiver.getNetWorkReceiver());
+    }
+
     /**
      * Android 4.4 以上的版本实现系统状态栏透明
      * @param activity
      */
-    public static void setTranslucentStatusBar(Activity activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            activity.getWindow().setFlags(
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+    public static void setTranslucentStatusBar(Activity activity, Boolean b) {
+        if (b) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                activity.getWindow().setFlags(
+                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            }
         }
     }
 
